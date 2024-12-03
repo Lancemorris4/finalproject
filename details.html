@@ -1,0 +1,77 @@
+<html>
+<head>
+    <title>Details Page</title>
+    <style>
+        body { 
+            background-color: rgb(27, 13, 95);
+            color: white;
+        }
+        a {
+            color: yellow;
+        }
+        img {
+            width: 250px;
+            height: auto;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>Item Details</h1>
+    <img id="item-image" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTk1SxZqZZAEgAYJmPnP360yfbCgxkF7Q71tQ&s" alt="Item Image">
+    <div id="item-details"></div>
+    <a href="index.html">Go back to index</a>
+
+    <script>
+        
+        const urlParams = new URLSearchParams(window.location.search);
+        const itemId = urlParams.get('id');
+
+        
+        const apiUrl = `http://157.230.214.215/api/lance_formulaoneteams/${itemId}`;
+
+        const teamImages = {
+            "Redbull": "https://cdn-8.motorsport.com/images/mgl/6n9RnBeY/s800/red-bull-racing-rb18-1.jpg",
+            "Mercedes AMG Petronas": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTm0rZp3IUDWEWR5_JYdGQozJtHUF8STaTIkA&s",
+            "HP Ferrari": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBDZJaEtdZZJ1nO38GufqEgRytKOl_bzSW0w&s",
+            "Mclaren": "https://www.racefans.net/wp-content/uploads/2024/01/racefansdotnet-23-01-16-17-31-43-1-McLaren-F1-2024-Livery-Front.jpg",
+            "Aston Martin": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbMQn12gj9ritOHmdnS41_qRar_cJ3QBk9lQ&s",
+            "Alpine": "https://cdn-6.motorsport.com/images/amp/0qXxlBy6/s1000/alpine-a524.jpg",
+            "Williams": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT0g1VW02eBwYJEFQnwaimUOGwQmd42qs2pkA&s",
+            "RB": "https://cdn-5.motorsport.com/images/amp/6AEjyWD6/s1000/yuki-tsunoda-vcarb-01.jpg",
+            "Stake": "https://www.formula1.com/fom-website/2023/Miscellaneous/sauber-2024-launch-1.png",
+            "Haas": "https://www.formula1.com/content/dam/fom-website/manual/2023/Haas/Haas-Mag-1.png",
+        };
+        
+        fetch(apiUrl)
+            .then(result => {
+                if (!result.ok) {
+                    throw new Error(`Error fetching item with ID ${itemId}`);
+                }
+                return result.json();
+            })
+            .then(data => {
+                
+                const imageElement = document.getElementById("item-image");
+                const detailsDiv = document.getElementById("item-details");
+
+                
+                const teamName = data["team name"];
+                imageElement.src = teamImages[teamName] || "https://cdn-8.motorsport.com/images/mgl/6n9RnBeY/s800/red-bull-racing-rb18-1.jpg";
+                imageElement.alt = `Image of ${teamName}`;
+
+                
+                detailsDiv.innerHTML = `
+                    <p><strong>Team Name:</strong> ${data["team name"]}</p>
+                    <p><strong>Driver 1:</strong> ${data["driver 1"]}</p>
+                    <p><strong>Driver 2:</strong> ${data["driver 2"]}</p>
+                `;
+            })
+            .catch(error => {
+                console.error('Error fetching item details:', error);
+                const detailsDiv = document.getElementById("item-details");
+                detailsDiv.innerHTML = `<p>Could not fetch details for the selected item. Please try again later.</p>`;
+            });
+    </script>
+</body>
+</html>
